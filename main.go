@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"text/tabwriter"
+	"time"
 )
 
 type options struct {
@@ -39,6 +40,7 @@ var (
 
 func getXmlRPCClient(sInfo *ServerInfo) *xmlrpcclient.XmlRPCClient {
 	c := xmlrpcclient.NewXmlRPCClient(sInfo.Url, true)
+	c.SetTimeout(5 * time.Second)
 	c.SetUser(sInfo.UserName)
 	c.SetPassword(sInfo.Password)
 
@@ -52,11 +54,12 @@ func printStatus(sInfo *ServerInfo) error {
 		fmt.Println(err.Error())
 		return err
 	} else {
-		_, _ = fmt.Fprintf(writer, "Server:%v:%v\n", sInfo.Name, sInfo.Url)
-		_, _ = fmt.Fprintf(writer, "Name\tState\tPid\n")
+		_, _ = fmt.Fprintf(writer, "Server:%v :%v\n", sInfo.Name, sInfo.Url)
+		_, _ = fmt.Fprintf(writer, "Name\tState\tPid\tStartAt\n")
 		for _, info := range pInfo.Value {
-			_, _ = fmt.Fprintf(writer, "%v\t%v\t%v\n", info.Name, info.Statename, info.Pid)
+			_, _ = fmt.Fprintf(writer, "%v\t%v\t%v\t%v\n", info.Name, info.Statename, info.Pid, time.Unix(int64(info.Start), 0).Format("2006-01-02 15:04:05"))
 		}
+		_, _ = fmt.Fprintf(writer, "\n")
 		_ = writer.Flush()
 		return nil
 	}
