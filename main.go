@@ -40,7 +40,7 @@ var (
 
 func getXmlRPCClient(sInfo *ServerInfo) *xmlrpcclient.XmlRPCClient {
 	c := xmlrpcclient.NewXmlRPCClient(sInfo.Url, true)
-	c.SetTimeout(5 * time.Second)
+	c.SetTimeout(30 * time.Second)
 	c.SetUser(sInfo.UserName)
 	c.SetPassword(sInfo.Password)
 
